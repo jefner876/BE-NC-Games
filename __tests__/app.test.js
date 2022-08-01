@@ -80,4 +80,28 @@ describe("/api/reviews/:review_id", () => {
         });
     });
   });
+
+  describe("PATCH", () => {
+    test("status 200: should increment votes according to request and return updated review", () => {
+      const voteUpdate = { inc_votes: 2 };
+      return request(app)
+        .patch("/api/reviews/1") // seeded at 1 vote
+        .send(voteUpdate)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("updatedReview");
+          const { updatedReview } = body;
+          expect(updatedReview).toHaveProperty("review_id");
+          expect(updatedReview).toHaveProperty("title");
+          expect(updatedReview).toHaveProperty("review_body");
+          expect(updatedReview).toHaveProperty("designer");
+          expect(updatedReview).toHaveProperty("review_img_url");
+          expect(updatedReview).toHaveProperty("votes");
+          expect(updatedReview).toHaveProperty("category");
+          expect(updatedReview).toHaveProperty("owner");
+          expect(updatedReview).toHaveProperty("created_at");
+          expect(updatedReview.votes).toBe(3);
+        });
+    });
+  });
 });
