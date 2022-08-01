@@ -8,6 +8,20 @@ afterAll(() => db.end());
 
 beforeEach(() => seed(data));
 
+describe("*", () => {
+  describe("ALL", () => {
+    test("status 404: uncreated route returns Not Found message ", () => {
+      return request(app)
+        .get("/api/not_a_route")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Route Not Found");
+        });
+    });
+  });
+});
+
 describe("/api/categories", () => {
   describe("GET", () => {
     test("status 200: should return array of category objects ", () => {
@@ -16,9 +30,12 @@ describe("/api/categories", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body).toHaveProperty("categories");
-          expect(body.categories).toBeInstanceOf(Array);
-          expect(body.categories[0]).toHaveProperty("slug");
-          expect(body.categories[0]).toHaveProperty("description");
+          const { categories } = body;
+          expect(categories).toBeInstanceOf(Array);
+          categories.forEach((category) => {
+            expect(category).toHaveProperty("slug");
+            expect(category).toHaveProperty("description");
+          });
         });
     });
   });
