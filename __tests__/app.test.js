@@ -70,5 +70,14 @@ describe("/api/reviews/:review_id", () => {
           expect(body.msg).toBe("Bad Request");
         });
     });
+    test("status 404: review_id valid but no data available shoud return 404 Not Found ", () => {
+      return request(app)
+        .get("/api/reviews/9999999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Review_ID Not Found");
+        });
+    });
   });
 });
