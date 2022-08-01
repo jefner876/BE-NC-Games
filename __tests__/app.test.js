@@ -61,5 +61,14 @@ describe("/api/reviews/:review_id", () => {
           expect(review).toHaveProperty("created_at");
         });
     });
+    test("status 400: invalid review_id should return 400 Bad Request ", () => {
+      return request(app)
+        .get("/api/reviews/not_an_id")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
   });
 });
