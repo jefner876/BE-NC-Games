@@ -40,3 +40,44 @@ describe("/api/categories", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id", () => {
+  describe("GET", () => {
+    test("status 200: should return single review by review_id ", () => {
+      return request(app)
+        .get("/api/reviews/1")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("review");
+          const { review } = body;
+          expect(review).toHaveProperty("review_id");
+          expect(review).toHaveProperty("title");
+          expect(review).toHaveProperty("review_body");
+          expect(review).toHaveProperty("designer");
+          expect(review).toHaveProperty("review_img_url");
+          expect(review).toHaveProperty("votes");
+          expect(review).toHaveProperty("category");
+          expect(review).toHaveProperty("owner");
+          expect(review).toHaveProperty("created_at");
+        });
+    });
+    test("status 400: invalid review_id should return 400 Bad Request ", () => {
+      return request(app)
+        .get("/api/reviews/not_an_id")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 404: review_id valid but no data available shoud return 404 Not Found ", () => {
+      return request(app)
+        .get("/api/reviews/9999999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Review_ID Not Found");
+        });
+    });
+  });
+});
