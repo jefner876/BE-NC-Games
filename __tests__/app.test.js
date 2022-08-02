@@ -32,6 +32,7 @@ describe("/api/categories", () => {
           expect(body).toHaveProperty("categories");
           const { categories } = body;
           expect(categories).toBeInstanceOf(Array);
+          expect(categories.length).not.toBe(0);
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug");
             expect(category).toHaveProperty("description");
@@ -156,6 +157,27 @@ describe("/api/reviews/:review_id", () => {
         .then(({ body }) => {
           expect(body).toHaveProperty("msg");
           expect(body.msg).toBe("Review_ID Not Found");
+        });
+    });
+  });
+});
+
+describe("/api/users", () => {
+  describe("GET", () => {
+    test("status 200: should return array of user objects  ", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("users");
+          const { users } = body;
+          expect(users).toBeInstanceOf(Array);
+          expect(users.length).not.toBe(0);
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username", expect.any(String));
+            expect(user).toHaveProperty("name", expect.any(String));
+            expect(user).toHaveProperty("avatar_url", expect.any(String));
+          });
         });
     });
   });

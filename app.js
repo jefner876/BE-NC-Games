@@ -5,6 +5,7 @@ const {
   getReviewByID,
   patchReviewVoteById,
 } = require("./controllers/reviews.controller");
+const { getUsers } = require("./controllers/users.controller");
 const {
   handleCustomErrors,
   handlePSQLErrors,
@@ -18,6 +19,8 @@ app.get("/api/categories", getCategories);
 
 app.get("/api/reviews/:review_id", getReviewByID);
 app.patch("/api/reviews/:review_id", patchReviewVoteById);
+
+app.get("/api/users", getUsers);
 
 app.all("*", accessInvalidRoute);
 
