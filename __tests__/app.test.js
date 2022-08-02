@@ -114,5 +114,49 @@ describe("/api/reviews/:review_id", () => {
           expect(updatedReview).toHaveProperty("votes", -4);
         });
     });
+    test("status 400: malformed body should reject with 400 Bad Request", () => {
+      const voteUpdate = { incorrect_key: 1 };
+      return request(app)
+        .patch("/api/reviews/1") // seeded at 1 vote
+        .send(voteUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 400: incorrect data type in body", () => {
+      const voteUpdate = { inc_votes: "not a numbers" };
+      return request(app)
+        .patch("/api/reviews/1") // seeded at 1 vote
+        .send(voteUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 400: invalid review_id should return 400 Bad Request ", () => {
+      const voteUpdate = { inc_votes: -5 };
+      return request(app)
+        .patch("/api/reviews/not_an_id")
+        .send(voteUpdate)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 404: review_id valid but no data available shoud return 404 Not Found ", () => {
+      const voteUpdate = { inc_votes: -5 };
+      return request(app)
+        .patch("/api/reviews/9999999")
+        .send(voteUpdate)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Review_ID Not Found");
+        });
+    });
   });
 });
