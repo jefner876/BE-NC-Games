@@ -182,3 +182,30 @@ describe("/api/users", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id", () => {
+  describe("GET", () => {
+    test("status 200: should add comment count to review object", () => {
+      return request(app)
+        .get("/api/reviews/2") //seeded with 3 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("review");
+          const { review } = body;
+          expect(review).toHaveProperty("review_id", 2);
+          expect(review).toHaveProperty("comment_count", 3);
+        });
+    });
+    test("status 200: should add comment count to review object(0 comments check)", () => {
+      return request(app)
+        .get("/api/reviews/1") //seeded with 0 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("review");
+          const { review } = body;
+          expect(review).toHaveProperty("review_id", 1);
+          expect(review).toHaveProperty("comment_count", 0);
+        });
+    });
+  });
+});
