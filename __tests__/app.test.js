@@ -32,6 +32,7 @@ describe("/api/categories", () => {
           expect(body).toHaveProperty("categories");
           const { categories } = body;
           expect(categories).toBeInstanceOf(Array);
+          expect(categories.length).not.toBe(0);
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug");
             expect(category).toHaveProperty("description");
@@ -171,6 +172,7 @@ describe("/api/users", () => {
           expect(body).toHaveProperty("users");
           const { users } = body;
           expect(users).toBeInstanceOf(Array);
+          expect(users.length).not.toBe(0);
           users.forEach((user) => {
             expect(user).toHaveProperty("username", expect.any(String));
             expect(user).toHaveProperty("name", expect.any(String));
