@@ -32,7 +32,7 @@ describe("/api/categories", () => {
           expect(body).toHaveProperty("categories");
           const { categories } = body;
           expect(categories).toBeInstanceOf(Array);
-          expect(categories.length).not.toBe(0);
+          expect(categories.length).toBe(4);
           categories.forEach((category) => {
             expect(category).toHaveProperty("slug");
             expect(category).toHaveProperty("description");
@@ -172,12 +172,39 @@ describe("/api/users", () => {
           expect(body).toHaveProperty("users");
           const { users } = body;
           expect(users).toBeInstanceOf(Array);
-          expect(users.length).not.toBe(0);
+          expect(users.length).toBe(4);
           users.forEach((user) => {
             expect(user).toHaveProperty("username", expect.any(String));
             expect(user).toHaveProperty("name", expect.any(String));
             expect(user).toHaveProperty("avatar_url", expect.any(String));
           });
+        });
+    });
+  });
+});
+
+describe("/api/reviews/:review_id", () => {
+  describe("GET", () => {
+    test("status 200: should add comment count to review object", () => {
+      return request(app)
+        .get("/api/reviews/2") //seeded with 3 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("review");
+          const { review } = body;
+          expect(review).toHaveProperty("review_id", 2);
+          expect(review).toHaveProperty("comment_count", 3);
+        });
+    });
+    test("status 200: should add comment count to review object(0 comments check)", () => {
+      return request(app)
+        .get("/api/reviews/1") //seeded with 0 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("review");
+          const { review } = body;
+          expect(review).toHaveProperty("review_id", 1);
+          expect(review).toHaveProperty("comment_count", 0);
         });
     });
   });
