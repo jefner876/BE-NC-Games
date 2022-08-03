@@ -277,7 +277,7 @@ describe("/api/reviews/:review_id/comments", () => {
             expect(comment).toHaveProperty("created_at", expect.any(String));
             expect(isNaN(Date.parse(comment.created_at))).toBe(false); //expect string to be in date format
             expect(comment).toHaveProperty("body", expect.any(String));
-            expect(comment).toHaveProperty("review_id", expect.any(Number));
+            expect(comment).toHaveProperty("review_id", 2);
             expect(comment).toHaveProperty("author", expect.any(String));
           });
         });
