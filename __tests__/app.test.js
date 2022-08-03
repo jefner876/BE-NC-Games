@@ -259,3 +259,28 @@ describe("/api/reviews", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("GET", () => {
+    test("status 200: should return an array of comments for the given review id", () => {
+      return request(app)
+        .get("/api/reviews/2/comments") //seeded with 3 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("comments");
+          const { comments } = body;
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments.length).toBe(3);
+          comments.forEach((comment) => {
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("votes", expect.any(Number));
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+            expect(isNaN(Date.parse(comment.created_at))).toBe(false); //expect string to be in date format
+            expect(comment).toHaveProperty("body", expect.any(String));
+            expect(comment).toHaveProperty("review_id", expect.any(Number));
+            expect(comment).toHaveProperty("author", expect.any(String));
+          });
+        });
+    });
+  });
+});

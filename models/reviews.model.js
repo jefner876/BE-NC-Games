@@ -48,3 +48,16 @@ exports.fetchReviews = () => {
       return reviews;
     });
 };
+
+exports.fetchCommentsByReviewID = (id) => {
+  return db
+    .query(
+      `
+  SELECT * FROM comments
+  WHERE review_id = $1`,
+      [id]
+    )
+    .then(({ rows: comments }) => {
+      return comments;
+    });
+};
