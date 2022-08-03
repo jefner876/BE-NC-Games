@@ -236,16 +236,19 @@ describe("/api/reviews", () => {
           });
         });
     });
-    test("status 200: should include comment_count in review objects (comments data)", () => {
+    test("status 200: should include comment_count in review objects and include reviews with 0 comments (comments data)", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
         .then(({ body: { reviews } }) => {
+          expect(reviews).toBeInstanceOf(Array);
+          expect(reviews.length).toBe(13); //all test reviews inc. some with zero comments
           reviews.forEach((review) => {
             expect(review).toHaveProperty("comment_count", expect.any(Number));
           });
         });
     });
+
     test("status 200: should be sorted in descending date order", () => {
       return request(app)
         .get("/api/reviews")
