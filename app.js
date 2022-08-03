@@ -4,6 +4,7 @@ const { accessInvalidRoute } = require("./controllers/all-routes.controller");
 const {
   getReviewByID,
   patchReviewVoteById,
+  getReviews,
 } = require("./controllers/reviews.controller");
 const { getUsers } = require("./controllers/users.controller");
 const {
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.get("/api/categories", getCategories);
 
+app.get("/api/reviews", getReviews);
 app.get("/api/reviews/:review_id", getReviewByID);
 app.patch("/api/reviews/:review_id", patchReviewVoteById);
 
