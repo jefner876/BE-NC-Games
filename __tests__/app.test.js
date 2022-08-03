@@ -282,5 +282,16 @@ describe("/api/reviews/:review_id/comments", () => {
           });
         });
     });
+    test("status 200: 0 comments on review ID should return empty array", () => {
+      return request(app)
+        .get("/api/reviews/1/comments") //seeded with 0 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("comments");
+          const { comments } = body;
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments.length).toBe(0);
+        });
+    });
   });
 });
