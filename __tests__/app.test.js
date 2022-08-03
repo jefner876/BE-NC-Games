@@ -3,6 +3,8 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data");
+const { convertTimestampToDate } = require("../db/seeds/utils");
+require("jest-sorted");
 
 afterAll(() => db.end());
 
@@ -205,6 +207,51 @@ describe("/api/reviews/:review_id", () => {
           const { review } = body;
           expect(review).toHaveProperty("review_id", 1);
           expect(review).toHaveProperty("comment_count", 0);
+        });
+    });
+  });
+});
+
+describe("/api/reviews", () => {
+  describe("GET", () => {
+    test("status 200: should return an array of review objects (reviews data)", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("reviews");
+          const { reviews } = body;
+          expect(reviews).toBeInstanceOf(Array);
+          expect(reviews.length).toBe(13);
+          reviews.forEach((review) => {
+            expect(review).toHaveProperty("owner", expect.any(String));
+            expect(review).toHaveProperty("title", expect.any(String));
+            expect(review).toHaveProperty("review_id", expect.any(Number));
+            expect(review).toHaveProperty("category", expect.any(String));
+            expect(review).toHaveProperty("review_img_url", expect.any(String));
+            expect(review).toHaveProperty("votes", expect.any(Number));
+            expect(review).toHaveProperty("designer", expect.any(String));
+            expect(review).toHaveProperty("created_at", expect.any(String));
+            expect(isNaN(Date.parse(review.created_at))).toBe(false); //expect string to be in date format
+          });
+        });
+    });
+    test("status 200: should include comment_count in review objects (comments data)", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          reviews.forEach((review) => {
+            expect(review).toHaveProperty("comment_count", expect.any(Number));
+          });
+        });
+    });
+    test("status 200: should be sorted in descending date order", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at", { descending: true });
         });
     });
   });
