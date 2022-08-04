@@ -65,3 +65,19 @@ exports.fetchCommentsByReviewID = (id) => {
     }
   );
 };
+
+exports.addCommentByReviewID = (body, id, author) => {
+  const addComment = db.query(
+    `
+  INSERT INTO comments 
+   (body, review_id, author)
+  VALUES
+    ($1,   $2,  $3)
+  returning *;
+  `,
+    [body, id, author]
+  );
+  return addComment.then(({ rows: [postedComment] }) => {
+    return postedComment;
+  });
+};

@@ -313,3 +313,102 @@ describe("/api/reviews/:review_id/comments", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("POST", () => {
+    test("status 200: should return the posted comment", () => {
+      const testComment = { username: "philippaclaire9", body: "test comment" };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("postedComment");
+          const { postedComment } = body;
+          expect(postedComment).toHaveProperty("review_id", 1);
+          expect(postedComment).toHaveProperty("author", "philippaclaire9");
+          expect(postedComment).toHaveProperty("body", "test comment");
+          expect(postedComment).toHaveProperty("comment_id", 7); //6 in seed data
+          expect(postedComment).toHaveProperty("votes", 0);
+          expect(postedComment).toHaveProperty(
+            "created_at",
+            expect.any(String)
+          );
+          expect(isNaN(Date.parse(postedComment.created_at))).toBe(false); //expect string to be in date format
+        });
+    });
+    test("status 400: malformed body should reject with 400 Bad Request", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        notAbody: "test comment",
+      };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 400: wrong data type should reject with 400 Bad Request", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        body: null,
+      };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 400: invalid review_id should return 400 Bad Request", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        body: "test comment",
+      };
+      return request(app)
+        .post("/api/reviews/not_an_id/comments")
+        .send(testComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 404: review_id valid but no data available shoud return 404 Not Found ", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        body: "test comment",
+      };
+      return request(app)
+        .post("/api/reviews/9999999/comments")
+        .send(testComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Review_ID Not Found");
+        });
+    });
+    test("status 404: username not found shoud return 404 Not Found ", () => {
+      const testComment = {
+        username: "notAUsername",
+        body: "test comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Username Not Found");
+        });
+    });
+  });
+});
