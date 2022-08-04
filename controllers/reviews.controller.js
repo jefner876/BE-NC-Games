@@ -40,11 +40,13 @@ exports.getCommentsByReviewID = (req, res, next) => {
     .catch(next);
 };
 
-exports.postCommentByReviewID = (req, res) => {
+exports.postCommentByReviewID = (req, res, next) => {
   const { review_id: id } = req.params;
   const { username: author, body } = req.body;
 
-  addCommentByReviewID(body, id, author).then((postedComment) => {
-    res.status(201).send({ postedComment });
-  });
+  addCommentByReviewID(body, id, author)
+    .then((postedComment) => {
+      res.status(201).send({ postedComment });
+    })
+    .catch(next);
 };

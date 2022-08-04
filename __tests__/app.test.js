@@ -338,5 +338,49 @@ describe("/api/reviews/:review_id/comments", () => {
           expect(isNaN(Date.parse(postedComment.created_at))).toBe(false); //expect string to be in date format
         });
     });
+    test("status 400: malformed body should reject with 400 Bad Request", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        notAbody: "test comment",
+      };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 400: wrong data type should reject with 400 Bad Request", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        body: null,
+      };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 400: invalid review_id should return 400 Bad Request", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        body: "test comment",
+      };
+      return request(app)
+        .post("/api/reviews/not_an_id/comments")
+        .send(testComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
   });
 });
