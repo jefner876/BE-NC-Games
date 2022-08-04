@@ -25,10 +25,21 @@ exports.patchReviewVoteById = (req, res, next) => {
     .catch(next);
 };
 
-exports.getReviews = (req, res) => {
-  fetchReviews().then((reviews) => {
-    res.status(200).send({ reviews });
-  });
+exports.getReviews = (req, res, next) => {
+  const validQueries = ["sort_by", "order", "category"];
+
+  for (const query in req.query) {
+    if (!validQueries.includes(query)) {
+      next({ status: 400, msg: "Bad Request" });
+    }
+  }
+  const { sort_by, order, category } = req.query;
+
+  fetchReviews(sort_by, order, category)
+    .then((reviews) => {
+      res.status(200).send({ reviews });
+    })
+    .catch(next);
 };
 
 exports.getCommentsByReviewID = (req, res, next) => {

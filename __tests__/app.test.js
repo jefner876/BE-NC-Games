@@ -412,3 +412,120 @@ describe("/api/reviews/:review_id/comments", () => {
     });
   });
 });
+
+describe("/api/reviews", () => {
+  describe("GET (queries)", () => {
+    describe("?sort_by", () => {
+      test("status 200: should be able to be sorted by title", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=title")
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("title", { descending: true });
+          });
+      });
+      test("status 200: should be able to be sorted by other valid columns", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=designer")
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("designer", { descending: true });
+          });
+      });
+      test("status 400: should reject invalid sort orders(avoid sql injection)", () => {
+        return request(app)
+          .get("/api/reviews?sort_by=notASortOrder")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toHaveProperty("msg");
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+    });
+    describe("?order", () => {
+      test("status 200: should be able to be sorted by asc", () => {
+        return request(app)
+          .get("/api/reviews?order=asc")
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at", { descending: false });
+          });
+      });
+      test("status 200: should be able to be sorted by desc", () => {
+        return request(app)
+          .get("/api/reviews?order=desc")
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+      test("status 400: should reject invalid orders(avoid sql injection)", () => {
+        return request(app)
+          .get("/api/reviews?order=notASortOrder")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toHaveProperty("msg");
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+    });
+    describe("?category", () => {
+      test("status 200: should be able to be filtered by category", () => {
+        return request(app)
+          .get("/api/reviews?category=dexterity") //one seeded
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeInstanceOf(Array);
+            expect(reviews.length).toBe(1);
+            reviews.forEach((review) => {
+              expect(review).toHaveProperty("category", "dexterity");
+            });
+          });
+      });
+      test("status 200: should be return empty array for valid category with no reviews", () => {
+        return request(app)
+          .get("/api/reviews?category=children's+games") //none seeded
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeInstanceOf(Array);
+            expect(reviews.length).toBe(0);
+          });
+      });
+
+      test("status 400: should reject invalid categories(avoid sql injection)", () => {
+        return request(app)
+          .get("/api/reviews?category=notACategory")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toHaveProperty("msg");
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+    });
+    describe("?general: sort_by&order&category", () => {
+      test("status 200: should be able to handle multiple query types", () => {
+        return request(app)
+          .get("/api/reviews?category=social+deduction&sort_by=title&order=asc")
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeInstanceOf(Array);
+            expect(reviews.length).toBe(11);
+            expect(reviews).toBeSortedBy("title", { descending: false });
+            reviews.forEach((review) => {
+              expect(review).toHaveProperty("category", "social deduction");
+            });
+          });
+      });
+
+      test("status 400: should reject typos before the = sign", () => {
+        return request(app)
+          .get("/api/reviews?notAQueryTerm=social+deduction")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toHaveProperty("msg");
+            expect(body.msg).toBe("Bad Request");
+          });
+      });
+    });
+  });
+});

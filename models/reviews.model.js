@@ -33,19 +33,55 @@ exports.updateReviewVotesById = (inc_votes, id) => {
     });
 };
 
-exports.fetchReviews = () => {
+exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
   return db
-    .query(
-      `
+    .query("SELECT * FROM reviews WHERE false")
+    .then(({ fields: columns }) => {
+      const validColumns = columns.map((column) => column.name);
+      validColumns.push("comment_count");
+      const validOrders = ["asc", "desc"];
+
+      if (!validColumns.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+      }
+
+      if (!validOrders.includes(order)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+      }
+      let preparedStatment = [];
+      let query = `
       SELECT reviews.*, COUNT(comment_id)::int AS comment_count 
       FROM reviews 
       LEFT JOIN comments on reviews.review_id = comments.review_id 
-      GROUP BY reviews.review_id
-      ORDER BY created_at desc
-      `
-    )
-    .then(({ rows: reviews }) => {
-      return reviews;
+      GROUP BY reviews.review_id`;
+
+      if (!category) {
+        query += ` ORDER BY ${sort_by} ${order}`;
+        return db.query(query, preparedStatment).then(({ rows: reviews }) => {
+          return reviews;
+        });
+      }
+
+      if (category) {
+        query += ` HAVING category = $1 ORDER BY ${sort_by} ${order}`;
+        preparedStatment.push(category);
+
+        return db
+          .query("SELECT slug FROM categories")
+          .then(({ rows: categories }) => {
+            const validCategories = categories.map((category) => category.slug);
+
+            if (!validCategories.includes(category)) {
+              return Promise.reject({ status: 400, msg: "Bad Request" });
+            }
+
+            return db
+              .query(query, preparedStatment)
+              .then(({ rows: reviews }) => {
+                return reviews;
+              });
+          });
+      }
     });
 };
 
