@@ -414,7 +414,7 @@ describe("/api/reviews/:review_id/comments", () => {
 });
 
 describe("/api/reviews", () => {
-  describe("GET (queries)", () => {
+  describe("GET ? sort_by", () => {
     test("status 200: should be able to be sorted by title", () => {
       return request(app)
         .get("/api/reviews?sort_by=title")
@@ -434,6 +434,33 @@ describe("/api/reviews", () => {
     test("status 400: should reject invalid sort orders(avoid sql injection)", () => {
       return request(app)
         .get("/api/reviews?sort_by=notASortOrder")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+  describe("GET ? order", () => {
+    test("status 200: should be able to be sorted by asc", () => {
+      return request(app)
+        .get("/api/reviews?order=asc")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at", { descending: false });
+        });
+    });
+    test("status 200: should be able to be sorted by desc", () => {
+      return request(app)
+        .get("/api/reviews?order=desc")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("status 400: should reject invalid orders(avoid sql injection)", () => {
+      return request(app)
+        .get("/api/reviews?order=notASortOrder")
         .expect(400)
         .then(({ body }) => {
           expect(body).toHaveProperty("msg");

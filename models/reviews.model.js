@@ -33,14 +33,19 @@ exports.updateReviewVotesById = (inc_votes, id) => {
     });
 };
 
-exports.fetchReviews = (sort_by = "created_at") => {
+exports.fetchReviews = (sort_by = "created_at", order = "desc") => {
   return db
     .query("SELECT * FROM reviews WHERE false")
     .then(({ fields: columns }) => {
       const validColumns = columns.map((column) => column.name);
       validColumns.push("comment_count");
+      const validOrders = ["asc", "desc"];
 
       if (!validColumns.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+      }
+
+      if (!validOrders.includes(order)) {
         return Promise.reject({ status: 400, msg: "Bad Request" });
       }
 
@@ -51,7 +56,7 @@ exports.fetchReviews = (sort_by = "created_at") => {
       FROM reviews 
       LEFT JOIN comments on reviews.review_id = comments.review_id 
       GROUP BY reviews.review_id
-      ORDER BY ${sort_by} desc
+      ORDER BY ${sort_by} ${order}
       `
         )
         .then(({ rows: reviews }) => {
