@@ -34,15 +34,7 @@ exports.getCommentsByReviewID = (req, res, next) => {
   const { review_id: id } = req.params;
   fetchCommentsByReviewID(id)
     .then((comments) => {
-      if (comments.length === 0) {
-        fetchReviewById(id)
-          .then(() => {
-            res.status(200).send({ comments });
-          })
-          .catch(next);
-      } else {
-        res.status(200).send({ comments });
-      }
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
