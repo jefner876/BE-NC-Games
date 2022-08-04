@@ -8,7 +8,10 @@ exports.removeCommentByCommentId = (id) => {
   WHERE comment_id =$1`,
       [id]
     )
-    .then((result) => {
-      return result;
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "Comment_id Not Found" });
+      }
+      return rowCount;
     });
 };

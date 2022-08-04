@@ -535,5 +535,23 @@ describe("/api/comments/:comment_id", () => {
     test("status 204: should delete comment by comment id", () => {
       return request(app).delete("/api/comments/1").expect(204);
     });
+    test("status 400: invalid comment_id should return 400 Bad Request", () => {
+      return request(app)
+        .delete("/api/comments/notAnID")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 404: valid comment_id out of range should return 404 Not Found", () => {
+      return request(app)
+        .delete("/api/comments/99999")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Comment_id Not Found");
+        });
+    });
   });
 });
