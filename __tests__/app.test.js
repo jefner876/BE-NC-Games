@@ -529,3 +529,11 @@ describe("/api/reviews", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("status 204: should delete comment by comment id", () => {
+      return request(app).delete("/api/comments/1").expect(204);
+    });
+  });
+});
