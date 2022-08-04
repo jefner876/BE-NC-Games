@@ -48,3 +48,20 @@ exports.fetchReviews = () => {
       return reviews;
     });
 };
+
+exports.fetchCommentsByReviewID = (id) => {
+  const commentsQuery = db.query(
+    `
+  SELECT * FROM comments
+  WHERE review_id = $1`,
+    [id]
+  );
+  return Promise.all([commentsQuery, this.fetchReviewById(id)]).then(
+    ([{ rows: comments }, review]) => {
+      if (!review) {
+        return Promise.reject({ status: 404, msg: "Review_ID Not Found" });
+      }
+      return comments;
+    }
+  );
+};
