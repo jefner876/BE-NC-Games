@@ -259,3 +259,57 @@ describe("/api/reviews", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("GET", () => {
+    test("status 200: should return an array of comments for the given review id", () => {
+      return request(app)
+        .get("/api/reviews/2/comments") //seeded with 3 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("comments");
+          const { comments } = body;
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments.length).toBe(3);
+          comments.forEach((comment) => {
+            expect(comment).toHaveProperty("comment_id", expect.any(Number));
+            expect(comment).toHaveProperty("votes", expect.any(Number));
+            expect(comment).toHaveProperty("created_at", expect.any(String));
+            expect(isNaN(Date.parse(comment.created_at))).toBe(false); //expect string to be in date format
+            expect(comment).toHaveProperty("body", expect.any(String));
+            expect(comment).toHaveProperty("review_id", 2);
+            expect(comment).toHaveProperty("author", expect.any(String));
+          });
+        });
+    });
+    test("status 200: 0 comments on review ID should return empty array", () => {
+      return request(app)
+        .get("/api/reviews/1/comments") //seeded with 0 comments
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("comments");
+          const { comments } = body;
+          expect(comments).toBeInstanceOf(Array);
+          expect(comments.length).toBe(0);
+        });
+    });
+    test("status 400: invalid review_id should return 400 Bad Request ", () => {
+      return request(app)
+        .get("/api/reviews/not_an_id/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+    test("status 404: review_id valid but no data available shoud return 404 Not Found ", () => {
+      return request(app)
+        .get("/api/reviews/9999999/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Review_ID Not Found");
+        });
+    });
+  });
+});
