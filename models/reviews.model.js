@@ -33,7 +33,7 @@ exports.updateReviewVotesById = (inc_votes, id) => {
     });
 };
 
-exports.fetchReviews = () => {
+exports.fetchReviews = (sort_by = "created_at") => {
   return db
     .query(
       `
@@ -41,7 +41,7 @@ exports.fetchReviews = () => {
       FROM reviews 
       LEFT JOIN comments on reviews.review_id = comments.review_id 
       GROUP BY reviews.review_id
-      ORDER BY created_at desc
+      ORDER BY ${sort_by} desc
       `
     )
     .then(({ rows: reviews }) => {

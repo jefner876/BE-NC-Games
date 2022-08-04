@@ -412,3 +412,24 @@ describe("/api/reviews/:review_id/comments", () => {
     });
   });
 });
+
+describe("/api/reviews", () => {
+  describe("GET (queries)", () => {
+    test("status 200: should be able to be sorted by title", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=title")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("title", { descending: true });
+        });
+    });
+    test("status 200: should be able to be sorted by other valid columns", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=designer")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("designer", { descending: true });
+        });
+    });
+  });
+});
