@@ -55,16 +55,33 @@ exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
       LEFT JOIN comments on reviews.review_id = comments.review_id 
       GROUP BY reviews.review_id`;
 
-      if (category) {
-        query += ` HAVING category = $1`;
-        preparedStatment.push(category);
+      if (!category) {
+        query += ` ORDER BY ${sort_by} ${order}`;
+        return db.query(query, preparedStatment).then(({ rows: reviews }) => {
+          return reviews;
+        });
       }
 
-      query += ` ORDER BY ${sort_by} ${order}`;
+      if (category) {
+        query += ` HAVING category = $1 ORDER BY ${sort_by} ${order}`;
+        preparedStatment.push(category);
 
-      return db.query(query, preparedStatment).then(({ rows: reviews }) => {
-        return reviews;
-      });
+        return db
+          .query("SELECT slug FROM categories")
+          .then(({ rows: categories }) => {
+            const validCategories = categories.map((category) => category.slug);
+
+            if (!validCategories.includes(category)) {
+              return Promise.reject({ status: 400, msg: "Bad Request" });
+            }
+
+            return db
+              .query(query, preparedStatment)
+              .then(({ rows: reviews }) => {
+                return reviews;
+              });
+          });
+      }
     });
 };
 
