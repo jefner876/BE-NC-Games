@@ -502,7 +502,7 @@ describe("/api/reviews", () => {
           });
       });
     });
-    describe("?sort_by&order&category", () => {
+    describe("?general: sort_by&order&category", () => {
       test("status 200: should be able to handle multiple query types", () => {
         return request(app)
           .get("/api/reviews?category=social+deduction&sort_by=title&order=asc")
@@ -514,6 +514,16 @@ describe("/api/reviews", () => {
             reviews.forEach((review) => {
               expect(review).toHaveProperty("category", "social deduction");
             });
+          });
+      });
+
+      test("status 400: should reject typos before the = sign", () => {
+        return request(app)
+          .get("/api/reviews?notAQueryTerm=social+deduction")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body).toHaveProperty("msg");
+            expect(body.msg).toBe("Bad Request");
           });
       });
     });
