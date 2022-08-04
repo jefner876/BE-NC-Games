@@ -382,5 +382,33 @@ describe("/api/reviews/:review_id/comments", () => {
           expect(body.msg).toBe("Bad Request");
         });
     });
+    test("status 404: review_id valid but no data available shoud return 404 Not Found ", () => {
+      const testComment = {
+        username: "philippaclaire9",
+        body: "test comment",
+      };
+      return request(app)
+        .post("/api/reviews/9999999/comments")
+        .send(testComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Review_ID Not Found");
+        });
+    });
+    test("status 404: username not found shoud return 404 Not Found ", () => {
+      const testComment = {
+        username: "notAUsername",
+        body: "test comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Username Not Found");
+        });
+    });
   });
 });
