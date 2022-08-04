@@ -313,3 +313,30 @@ describe("/api/reviews/:review_id/comments", () => {
     });
   });
 });
+
+describe("/api/reviews/:review_id/comments", () => {
+  describe("POST", () => {
+    test("status 200: should return the posted comment", () => {
+      const testComment = { username: "philippaclaire9", body: "test comment" };
+
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(testComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("postedComment");
+          const { postedComment } = body;
+          expect(postedComment).toHaveProperty("review_id", 1);
+          expect(postedComment).toHaveProperty("author", "philippaclaire9");
+          expect(postedComment).toHaveProperty("body", "test comment");
+          expect(postedComment).toHaveProperty("comment_id", 7); //6 in seed data
+          expect(postedComment).toHaveProperty("votes", 0);
+          expect(postedComment).toHaveProperty(
+            "created_at",
+            expect.any(String)
+          );
+          expect(isNaN(Date.parse(postedComment.created_at))).toBe(false); //expect string to be in date format
+        });
+    });
+  });
+});
