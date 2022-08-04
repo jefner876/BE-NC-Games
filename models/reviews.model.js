@@ -33,7 +33,7 @@ exports.updateReviewVotesById = (inc_votes, id) => {
     });
 };
 
-exports.fetchReviews = (sort_by = "created_at", order = "desc") => {
+exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
   return db
     .query("SELECT * FROM reviews WHERE false")
     .then(({ fields: columns }) => {
@@ -48,20 +48,23 @@ exports.fetchReviews = (sort_by = "created_at", order = "desc") => {
       if (!validOrders.includes(order)) {
         return Promise.reject({ status: 400, msg: "Bad Request" });
       }
-
-      return db
-        .query(
-          `
+      let preparedStatment = [];
+      let query = `
       SELECT reviews.*, COUNT(comment_id)::int AS comment_count 
       FROM reviews 
       LEFT JOIN comments on reviews.review_id = comments.review_id 
-      GROUP BY reviews.review_id
-      ORDER BY ${sort_by} ${order}
-      `
-        )
-        .then(({ rows: reviews }) => {
-          return reviews;
-        });
+      GROUP BY reviews.review_id`;
+
+      if (category) {
+        query += ` HAVING category = $1`;
+        preparedStatment.push(category);
+      }
+
+      query += ` ORDER BY ${sort_by} ${order}`;
+
+      return db.query(query, preparedStatment).then(({ rows: reviews }) => {
+        return reviews;
+      });
     });
 };
 

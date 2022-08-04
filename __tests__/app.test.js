@@ -468,4 +468,24 @@ describe("/api/reviews", () => {
         });
     });
   });
+  describe("GET ? category", () => {
+    test("status 200: should be able to be filtered by category", () => {
+      return request(app)
+        .get("/api/reviews?category=dexterity") //one seeded
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeInstanceOf(Array);
+          expect(reviews.length).toBe(1);
+        });
+    });
+    test("status 200: should be return empty array for valid category with no reviews", () => {
+      return request(app)
+        .get("/api/reviews?category=children's+games") //none seeded
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeInstanceOf(Array);
+          expect(reviews.length).toBe(0);
+        });
+    });
+  });
 });
