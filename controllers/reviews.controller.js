@@ -25,11 +25,13 @@ exports.patchReviewVoteById = (req, res, next) => {
     .catch(next);
 };
 
-exports.getReviews = (req, res) => {
+exports.getReviews = (req, res, next) => {
   const { sort_by } = req.query;
-  fetchReviews(sort_by).then((reviews) => {
-    res.status(200).send({ reviews });
-  });
+  fetchReviews(sort_by)
+    .then((reviews) => {
+      res.status(200).send({ reviews });
+    })
+    .catch(next);
 };
 
 exports.getCommentsByReviewID = (req, res, next) => {

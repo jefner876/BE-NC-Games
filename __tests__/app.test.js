@@ -431,5 +431,14 @@ describe("/api/reviews", () => {
           expect(reviews).toBeSortedBy("designer", { descending: true });
         });
     });
+    test("status 400: should reject invalid sort orders(avoid sql injection)", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=notASortOrder")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("msg");
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
   });
 });

@@ -35,17 +35,28 @@ exports.updateReviewVotesById = (inc_votes, id) => {
 
 exports.fetchReviews = (sort_by = "created_at") => {
   return db
-    .query(
-      `
+    .query("SELECT * FROM reviews WHERE false")
+    .then(({ fields: columns }) => {
+      const validColumns = columns.map((column) => column.name);
+      validColumns.push("comment_count");
+
+      if (!validColumns.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+      }
+
+      return db
+        .query(
+          `
       SELECT reviews.*, COUNT(comment_id)::int AS comment_count 
       FROM reviews 
       LEFT JOIN comments on reviews.review_id = comments.review_id 
       GROUP BY reviews.review_id
       ORDER BY ${sort_by} desc
       `
-    )
-    .then(({ rows: reviews }) => {
-      return reviews;
+        )
+        .then(({ rows: reviews }) => {
+          return reviews;
+        });
     });
 };
 
