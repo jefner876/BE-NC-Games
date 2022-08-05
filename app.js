@@ -10,6 +10,9 @@ const {
 } = require("./controllers/reviews.controller");
 const { getUsers } = require("./controllers/users.controller");
 const {
+  deleteCommentByCommentId,
+} = require("./controllers/comments.controller");
+const {
   handleCustomErrors,
   handlePSQLErrors,
   handleServerErrors,
@@ -28,6 +31,8 @@ app.get("/api/reviews/:review_id/comments", getCommentsByReviewID);
 app.post("/api/reviews/:review_id/comments", postCommentByReviewID);
 
 app.get("/api/users", getUsers);
+
+app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
 
 app.all("*", accessInvalidRoute);
 
