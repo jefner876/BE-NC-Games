@@ -33,7 +33,19 @@ exports.updateReviewVotesById = (inc_votes, id) => {
     });
 };
 
-exports.fetchReviews = (sort_by = "created_at", order = "desc", category) => {
+exports.fetchReviews = (
+  sort_by = "created_at",
+  order = "desc",
+  category,
+  queries
+) => {
+  const validQueries = ["sort_by", "order", "category"];
+
+  for (const query in queries) {
+    if (!validQueries.includes(query)) {
+      return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+  }
   return db
     .query("SELECT * FROM reviews WHERE false")
     .then(({ fields: columns }) => {
