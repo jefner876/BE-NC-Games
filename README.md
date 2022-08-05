@@ -6,26 +6,7 @@ A REST API for boardgame reviews developed as a solo project during Northcoders 
 
 A version of this app is hosted [here](https://nc-games-portfolio.herokuapp.com/api).
 
-## Structure
-
-Built using:
-
-- [Node.js](https://nodejs.org/en/about/)
-- [Express.js](https://expressjs.com/)
-- [PostgreSQL](https://www.postgresql.org/)
-
-Full TDD using:
-
-- [Jest](https://jestjs.io/)
-
-## Setup
-
-### Minimum Requirements
-
-- Node.js v18.2.0
-- Postgres v12.11
-
-### Process
+## Setup Process
 
 If you want to develop this project you will first need to:
 
@@ -61,5 +42,22 @@ If you want to develop this project you will first need to:
    npm run start
    ```
 8. All done! You can now make requests to your server with a programmes such as [Insomnia](https://insomnia.rest/).
+
+## Structure
+
+### Built using:
+
+- [Node.js](https://nodejs.org/en/about/)
+- [Express.js](https://expressjs.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+
+### Full TDD using:
+
+- [Jest](https://jestjs.io/)
+
+### Minimum Requirements
+
+- Node.js v18.2.0
+- Postgres v12.11
 
 ## Enjoy!
