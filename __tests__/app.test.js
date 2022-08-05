@@ -558,3 +558,29 @@ describe("/api/comments/:comment_id", () => {
     });
   });
 });
+
+describe("/api", () => {
+  describe("GET", () => {
+    test("status 200: returns endpoints json ", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("endpoints");
+          const { endpoints } = body;
+          expect(endpoints).toHaveProperty("GET /api");
+          expect(endpoints).toHaveProperty("GET /api/categories");
+          expect(endpoints).toHaveProperty("GET /api/reviews");
+          expect(endpoints).toHaveProperty("GET /api/reviews/:review_id");
+          expect(endpoints).toHaveProperty(
+            "GET /api/reviews/:review_id/comments"
+          );
+          expect(endpoints).toHaveProperty("PATCH /api/reviews/:review_id");
+          expect(endpoints).toHaveProperty(
+            "POST /api/reviews/:review_id/comments"
+          );
+          expect(endpoints).toHaveProperty("DELETE /api/comments/:comment_id");
+        });
+    });
+  });
+});

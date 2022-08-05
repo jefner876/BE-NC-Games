@@ -26,9 +26,88 @@
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           "category": "hidden-roles",
           "created_at": 1610964101251,
-          "votes": 5
+          "votes": 5,
+          "comment_count": 3
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id":{
+    "description":"serves single review object",
+    "queries":[],
+    "exampleResponse":{
+      "review":{
+          "title": "One Night Ultimate Werewolf",
+          "designer": "Akihisa Okui",
+          "owner": "happyamy2016",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": 1610964101251,
+          "votes": 5
+      }
+    }
+  },
+  "GET /api/reviews/:review_id/comments":{
+    "description":"serves an array of all comments associated with a specific review",
+    "queries":[],
+    "exampleResponse":{
+      "comments":   [{
+        "body": "I loved this game too!",
+        "votes": 16,
+        "author": "bainesface",
+        "review_id": 2,
+        "created_at": 1610964101251
+      }]
+    }
+  } ,
+  "GET /api/users":{
+    "description":"serves an array of all users",
+    "queries":[],
+    "exampleResponse":{
+      "users": [  
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  } 
+  ,
+  "PATCH /api/reviews/:review_id":{
+    "description":"accepts a vote adjustment object and changes the votes element of a review",
+    "requestFormat":{"inc_vote": "newVote"},
+    "requestNotes":"newVote must be a number",
+    "exampleResponse":{
+      "review":{
+        "title": "One Night Ultimate Werewolf",
+        "designer": "Akihisa Okui",
+        "owner": "happyamy2016",
+        "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        "category": "hidden-roles",
+        "created_at": 1610964101251,
+        "votes": 6, 
+        "comment_count": 3
+      }
+    }
+  },
+  "POST /api/reviews/:review_id/comments":{
+    "description":"accepts a new comment object",
+    "requestFormat":{"username": "mallionaire", "body": "Love it"},
+    "requestNotes":"username must be a valid user",
+    "exampleResponse":{
+      "postedComment":   {
+        "body": "Love it",
+        "votes": 0,
+        "author": "mallionaire",
+        "review_id": 2,
+        "created_at": 1610964101251
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id":{
+    "description":"deletes a comment by comment_id",
+    "exampleResponse":"no response"
   }
+
 }

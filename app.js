@@ -17,9 +17,12 @@ const {
   handlePSQLErrors,
   handleServerErrors,
 } = require("./errors");
+const { getAPIEndpoints } = require("./controllers/api.controller");
 
 const app = express();
 app.use(express.json());
+
+app.get("/api", getAPIEndpoints);
 
 app.get("/api/categories", getCategories);
 
