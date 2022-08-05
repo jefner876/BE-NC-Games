@@ -1,5 +1,6 @@
 const express = require("express");
-const { getCategories } = require("./controllers/categories.controller");
+const apiRouter = require("./routes/api.router.js");
+const categoriesRouter = require("./routes/categories.router");
 const { accessInvalidRoute } = require("./controllers/all-routes.controller");
 const {
   getReviewByID,
@@ -8,34 +9,28 @@ const {
   getCommentsByReviewID,
   postCommentByReviewID,
 } = require("./controllers/reviews.controller");
-const { getUsers } = require("./controllers/users.controller");
-const {
-  deleteCommentByCommentId,
-} = require("./controllers/comments.controller");
+
 const {
   handleCustomErrors,
   handlePSQLErrors,
   handleServerErrors,
 } = require("./errors");
-const { getAPIEndpoints } = require("./controllers/api.controller");
+const usersRouter = require("./routes/users.router.js");
+const commentsRouter = require("./routes/comments.router.js");
+const reviewsRouter = require("./routes/api.reviews.js");
 
 const app = express();
 app.use(express.json());
 
-app.get("/api", getAPIEndpoints);
+app.use("/api", apiRouter);
 
-app.get("/api/categories", getCategories);
+app.use("/api/categories", categoriesRouter);
 
-app.get("/api/reviews", getReviews);
-app.get("/api/reviews/:review_id", getReviewByID);
-app.patch("/api/reviews/:review_id", patchReviewVoteById);
+app.use("/api/reviews", reviewsRouter);
 
-app.get("/api/reviews/:review_id/comments", getCommentsByReviewID);
-app.post("/api/reviews/:review_id/comments", postCommentByReviewID);
+app.use("/api/users", usersRouter);
 
-app.get("/api/users", getUsers);
-
-app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
+app.use("/api/comments", commentsRouter);
 
 app.all("*", accessInvalidRoute);
 
