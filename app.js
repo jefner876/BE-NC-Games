@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const apiRouter = require("./routes/api.router.js");
 const categoriesRouter = require("./routes/categories.router");
 const { accessInvalidRoute } = require("./controllers/all-routes.controller");
@@ -20,6 +21,7 @@ const commentsRouter = require("./routes/comments.router.js");
 const reviewsRouter = require("./routes/api.reviews.js");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use("/api", apiRouter);

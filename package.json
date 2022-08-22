@@ -7,9 +7,9 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
-    "prepare": "husky install", 
-    "seed:prod":"NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed", 
-    "start":"node listen.js"
+    "prepare": "husky install",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/northcoders/be-nc-games#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.18.1",
     "pg": "^8.7.3",
