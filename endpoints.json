@@ -76,7 +76,7 @@
   ,
   "PATCH /api/reviews/:review_id":{
     "description":"accepts a vote adjustment object and changes the votes element of a review",
-    "requestFormat":{"inc_vote": "newVote"},
+    "requestFormat":{"inc_votes": "newVote"},
     "requestNotes":"newVote must be a number",
     "exampleResponse":{
       "review":{
