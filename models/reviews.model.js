@@ -101,7 +101,8 @@ exports.fetchCommentsByReviewID = (id) => {
   const commentsQuery = db.query(
     `
   SELECT * FROM comments
-  WHERE review_id = $1`,
+  WHERE review_id = $1
+  ORDER BY created_at`,
     [id]
   );
   return Promise.all([commentsQuery, this.fetchReviewById(id)]).then(
