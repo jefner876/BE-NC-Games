@@ -4,7 +4,7 @@
 
 A REST API for boardgame reviews developed as a solo project during Northcoders Bootcamp.
 
-A version of this api is hosted [here](https://nc-games-portfolio.herokuapp.com/api).
+A version of this api is hosted [here](https://you-game.onrender.com/api).
 
 Information on a connecting front end may be found [here](https://github.com/jefner876/fe-nc-games) and a version of the hosted app [here](https://you-game.netlify.app/reviews)
 
