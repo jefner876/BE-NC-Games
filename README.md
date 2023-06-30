@@ -4,7 +4,7 @@
 
 A REST API for boardgame reviews developed as a solo project during Northcoders Bootcamp.
 
-A version of this app is hosted [here](https://nc-games-portfolio.herokuapp.com/api).
+<!-- A version of this app is hosted [here](https://nc-games-portfolio.herokuapp.com/api). -->
 
 ## Setup Process
 
